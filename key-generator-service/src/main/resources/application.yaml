@@ -1,16 +1,13 @@
 spring:
   application:
     name: key-generator
-  profiles:
-    active:
-      - dev
   mvc:
     throw-exception-if-no-handler-found: true
   resources:
     add-mappings: false
 
 server:
-  port: 8080
+  port: 8081
   error:
     whitelabel:
       enabled: false
@@ -20,4 +17,3 @@ management:
     web:
       exposure:
         include: "*"
-

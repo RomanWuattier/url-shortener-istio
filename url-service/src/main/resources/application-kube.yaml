@@ -1,0 +1,11 @@
+spring:
+  profiles: kube
+
+server:
+  port: 8080
+
+infrastructure:
+  upstream-service:
+    key-generator:
+      host: key-generator
+      port: 80

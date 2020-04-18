@@ -1,9 +1,6 @@
 spring:
   application:
     name: url
-  profiles:
-    active:
-      - dev
   mvc:
     throw-exception-if-no-handler-found: true
   resources:
@@ -24,5 +21,5 @@ management:
 infrastructure:
   upstream-service:
     key-generator:
-      host: key-generator
-      port: 80
+      host: 127.0.0.1
+      port: 8081

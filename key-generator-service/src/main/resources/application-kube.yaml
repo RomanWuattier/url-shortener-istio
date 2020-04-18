@@ -1,0 +1,5 @@
+spring:
+  profiles: kube
+
+server:
+  port: 8080
