@@ -1,0 +1,9 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: url
+    version: "1.0"
+  name: url
+spec:
+  minAvailable: 0

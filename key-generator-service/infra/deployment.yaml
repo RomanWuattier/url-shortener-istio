@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: key-generator
+    version: "1.0"
+  name: key-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: key-generator
+  strategy:
+    rollingUpdate:
+      maxSurge: 34%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: key-generator
+    spec:
+      containers:
+        - name: key-generator
+          image: key-generator-service:1
+          imagePullPolicy: Never
+          livenessProbe:
+            httpGet:
+              path: /actuator/info
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP

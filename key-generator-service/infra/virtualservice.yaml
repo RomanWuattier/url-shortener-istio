@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: key-generator
+spec:
+  hosts:
+  - key-generator.default.svc.cluster.local
+  http:
+  - match:
+    - uri:
+        prefix: /key
+    route:
+      - destination:
+          port:
+            number: 80
+          host: key-generator.default.svc.cluster.local

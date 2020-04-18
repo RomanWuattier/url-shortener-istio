@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: url
+  profiles:
+    active:
+      - dev
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+infrastructure:
+  upstream-service:
+    key-generator:
+      host: key-generator
+      port: 80

@@ -1,0 +1,9 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: key-generator
+    version: "1.0"
+  name: key-generator
+spec:
+  minAvailable: 0
