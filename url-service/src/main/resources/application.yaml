@@ -23,3 +23,10 @@ infrastructure:
     key-generator:
       host: 127.0.0.1
       port: 8081
+
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      user: admin
+      password: admin
+      db: url

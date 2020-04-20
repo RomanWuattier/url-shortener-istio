@@ -9,3 +9,10 @@ infrastructure:
     key-generator:
       host: key-generator
       port: 80
+
+    mongodb:
+      host: mongodb
+      port: 27017
+      user: ${MONGO_INITDB_ROOT_USERNAME}
+      password: ${MONGO_INITDB_ROOT_PASSWORD}
+      db: ${MONGO_INITDB_DATABASE}

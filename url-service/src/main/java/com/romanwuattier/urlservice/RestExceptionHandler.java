@@ -17,7 +17,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public InternalServerError handle5xx(RuntimeException ex, WebRequest request) {
         return InternalServerError.builder()
                                   .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                                  .message("unexpected_error")
+                                  .message(ex.getCause().toString())
                                   .build();
     }
 

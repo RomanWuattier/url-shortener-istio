@@ -44,7 +44,7 @@ echo 'Kubernetes apply deployment'
 echo '========================================================'
 kubectl apply -f url-service/infra
 kubectl apply -f key-generator-service/infra
-kubectl apply -f ingress-gateway.yaml
+kubectl apply -f infra
 echo '\n'
 
 echo '========================================================'

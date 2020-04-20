@@ -1,5 +1,7 @@
 package com.romanwuattier.urlservice.upstream;
 
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,12 @@ public interface KeyGeneratorUpstreamService {
 
     @GET("key/get")
     CompletableFuture<KeyResponse> getKey();
+
+    @Data
+    @Builder
+    class KeyResponse {
+        String key;
+    }
 
     @Configuration
     class KeyGeneratorUpstreamServiceConfiguration {

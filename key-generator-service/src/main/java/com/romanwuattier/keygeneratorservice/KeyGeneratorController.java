@@ -16,6 +16,6 @@ public class KeyGeneratorController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<KeyResponse> get() {
-        return keyService.generateRandomB64Key();
+        return keyService.generateRandomB62Key();
     }
 }
