@@ -1,6 +1,7 @@
 package com.romanwuattier.urlservice.repository;
 
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.result.DeleteResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
@@ -28,6 +31,14 @@ public class MongoDbRepository {
                                         .build();
             return urlOperations.insert(entity);
         }).thenApply(UrlEntity::getHash);
+    }
+
+    public CompletableFuture<Boolean> del(String hash) {
+        return CompletableFuture.supplyAsync(() -> {
+            Query query = new Query(Criteria.where("_id").is(hash));
+            DeleteResult result = urlOperations.remove(query, UrlEntity.class);
+            return result.wasAcknowledged() && result.getDeletedCount() > 0;
+        });
     }
 
     @lombok.Value
