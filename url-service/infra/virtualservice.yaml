@@ -8,9 +8,7 @@ spec:
   http:
   - match:
     - uri:
-      prefix: /url/create
-    - uri:
-      prefix: /url/del
+        prefix: /url
     route:
       - destination:
           port:

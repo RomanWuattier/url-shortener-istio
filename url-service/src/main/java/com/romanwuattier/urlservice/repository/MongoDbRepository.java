@@ -16,10 +16,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 public class MongoDbRepository {
+    private static final String URL_ID_KEY = "_id";
+
     private final MongoOperations urlOperations;
 
     public CompletableFuture<String> save(String hash, String url, @Nullable LocalDateTime expireDateTime) {
@@ -35,9 +38,17 @@ public class MongoDbRepository {
 
     public CompletableFuture<Boolean> del(String hash) {
         return CompletableFuture.supplyAsync(() -> {
-            Query query = new Query(Criteria.where("_id").is(hash));
+            Query query = new Query(Criteria.where(URL_ID_KEY).is(hash));
             DeleteResult result = urlOperations.remove(query, UrlEntity.class);
             return result.wasAcknowledged() && result.getDeletedCount() > 0;
+        });
+    }
+
+    public CompletableFuture<Optional<String>> get(String hash) {
+        return CompletableFuture.supplyAsync(() -> {
+            Query query = new Query(Criteria.where(URL_ID_KEY).is(hash));
+            return Optional.ofNullable(urlOperations.findOne(query, UrlEntity.class))
+                           .map(UrlEntity::getUrl);
         });
     }
 

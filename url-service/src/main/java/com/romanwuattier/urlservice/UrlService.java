@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @AllArgsConstructor
-class UrlGeneratorService {
+class UrlService {
     private final KeyGeneratorUpstreamService keyGeneratorUpstreamService;
     private final MongoDbRepository mongoDbRepository;
 
@@ -22,7 +22,8 @@ class UrlGeneratorService {
             .getKey()
             .thenCompose(response -> mongoDbRepository.save(response.getKey(), url, expireDateTime))
             .thenApply(key -> UrlResponse.builder()
-                                         .redirectUrl("http://".concat(key))
+                                         .redirectUrl(String.format(
+                                             "http://%s:%s/url/redirect/%s", "{host}", "{port}", key))
                                          .build());
     }
 
@@ -34,6 +35,13 @@ class UrlGeneratorService {
                                                  .isDel(false)
                                                  .errorMessage(String.format("Unknown hash: %s", hash))
                                                  .build());
+    }
+
+    public CompletableFuture<String> get(String hash) {
+        return mongoDbRepository.get(hash)
+                                .thenApply(originalUrl -> originalUrl.orElseThrow(
+                                    () -> new IllegalArgumentException(String.format("Unknown hash: %s", hash))
+                                ));
     }
 
     @Value
