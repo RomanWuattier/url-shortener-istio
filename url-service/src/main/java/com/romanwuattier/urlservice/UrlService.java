@@ -27,14 +27,28 @@ class UrlService {
                                          .build());
     }
 
+    // Note: This function isn't safe. When the hash is removed from the `mongoDbRepository` and an error occurs
+    // while releasing the key in the `keyGeneratorUpstreamService`, then the key is lost forever.
+    // There are multiple options solving the problem; one could store the key in a queue and the
+    // key-generator-service will listen events.
     public CompletableFuture<DelResponse> del(String hash) {
-        return mongoDbRepository.del(hash)
-                                .thenApply(success -> success
-                                    ? DelResponse.builder().isDel(true).hash(hash).build()
-                                    : DelResponse.builder()
-                                                 .isDel(false)
-                                                 .errorMessage(String.format("Unknown hash: %s", hash))
-                                                 .build());
+        return mongoDbRepository
+            .del(hash)
+            .thenCompose(isDel -> isDel
+                ? keyGeneratorUpstreamService.releaseKey(hash)
+                : CompletableFuture.failedFuture(new RuntimeException(String.format("Unable to delete: %s", hash)))
+            )
+            .thenApply(releaseKey -> {
+                if (releaseKey.isReleased()) {
+                    return DelResponse.builder().isDel(true).hash(releaseKey.getKey()).build();
+                } else {
+                    throw new RuntimeException(releaseKey.getErrorMessage());
+                }
+            })
+            .exceptionally(throwable -> DelResponse.builder()
+                                                   .isDel(false)
+                                                   .errorMessage(throwable.getMessage())
+                                                   .build());
     }
 
     public CompletableFuture<String> get(String hash) {

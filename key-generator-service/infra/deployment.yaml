@@ -23,6 +23,13 @@ spec:
       containers:
         - name: key-generator
           image: key-generator-service:1
+          env:
+          - name: MONGO_INITDB_DATABASE
+            value: url
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: admin
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: admin
           imagePullPolicy: Never
           livenessProbe:
             httpGet:

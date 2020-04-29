@@ -3,3 +3,12 @@ spring:
 
 server:
   port: 8080
+
+infrastructure:
+  upstream-service:
+    mongodb:
+      host: mongodb
+      port: 27017
+      user: ${MONGO_INITDB_ROOT_USERNAME}
+      password: ${MONGO_INITDB_ROOT_PASSWORD}
+      db: ${MONGO_INITDB_DATABASE}
