@@ -14,6 +14,17 @@ spec:
 
 ---
 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-root-rw-secret
+type: Opaque
+data:
+  MONGO_ROOT_USERNAME: YWRtaW4=
+  MONGO_ROOT_PASSWORD: YWRtaW4=
+
+---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -37,21 +48,40 @@ spec:
         env:
         - name: MONGO_INITDB_DATABASE
           value: url
-          # Use secret in real usage
+          # Use sealed secrets instead
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: admin
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-root-rw-secret
+              key: MONGO_ROOT_USERNAME
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: admin
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-root-rw-secret
+              key: MONGO_ROOT_PASSWORD
         ports:
         - containerPort: 27017
           name: mongodb
         volumeMounts:
         - name: mongodb-persistent-storage
           mountPath: /data/mongodb
+        - name: mongodb-root-rw-secret
+          mountPath: /etc/secret
+          readOnly: true
       volumes:
       - name: mongodb-persistent-storage
         persistentVolumeClaim:
           claimName: mongodb-pv-claim
+      - name: mongodb-root-rw-secret
+        secret:
+          secretName: mongodb-root-rw-secret
+          items:
+          - key: MONGO_ROOT_USERNAME
+            path: admin/MONGO_ROOT_USERNAME
+            mode: 0444 # Octal read only
+          - key: MONGO_ROOT_PASSWORD
+            path: admin/MONGO_ROOT_PASSWORD
+            mode: 0444 # Octal read only
 
 ---
 

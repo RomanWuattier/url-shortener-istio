@@ -27,9 +27,15 @@ spec:
           - name: MONGO_INITDB_DATABASE
             value: url
           - name: MONGO_INITDB_ROOT_USERNAME
-            value: admin
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-root-rw-secret
+                key: MONGO_ROOT_USERNAME
           - name: MONGO_INITDB_ROOT_PASSWORD
-            value: admin
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-root-rw-secret
+                key: MONGO_ROOT_PASSWORD
           imagePullPolicy: Never
           livenessProbe:
             httpGet:
@@ -43,3 +49,18 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - name: mongodb-root-rw-secret
+              mountPath: /etc/secret
+              readOnly: true
+      volumes:
+      - name: mongodb-root-rw-secret
+        secret:
+          secretName: mongodb-root-rw-secret
+          items:
+          - key: MONGO_ROOT_USERNAME
+            path: admin/MONGO_ROOT_USERNAME
+            mode: 0444 # Octal read only
+          - key: MONGO_ROOT_PASSWORD
+            path: admin/MONGO_ROOT_PASSWORD
+            mode: 0444 # Octal read only
