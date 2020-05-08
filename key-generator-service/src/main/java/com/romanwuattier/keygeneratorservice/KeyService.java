@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;

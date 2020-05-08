@@ -5,9 +5,9 @@ import com.romanwuattier.urlservice.upstream.KeyGeneratorUpstreamService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
