@@ -13,11 +13,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import javax.annotation.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static com.romanwuattier.urlservice.ThreadPoolUtility.IO_FIXED_EXECUTOR;
 
 @AllArgsConstructor
 public class MongoDbRepository {
@@ -33,7 +36,7 @@ public class MongoDbRepository {
                                         .expireDateTime(expireDateTime)
                                         .build();
             return urlOperations.insert(entity);
-        }).thenApply(UrlEntity::getHash);
+        }, IO_FIXED_EXECUTOR).thenApply(UrlEntity::getHash);
     }
 
     public CompletableFuture<Boolean> del(String hash) {
@@ -41,7 +44,7 @@ public class MongoDbRepository {
             Query query = new Query(Criteria.where(URL_ID_KEY).is(hash));
             DeleteResult result = urlOperations.remove(query, UrlEntity.class);
             return result.wasAcknowledged() && result.getDeletedCount() > 0;
-        });
+        }, IO_FIXED_EXECUTOR);
     }
 
     public CompletableFuture<Optional<String>> get(String hash) {
@@ -49,7 +52,7 @@ public class MongoDbRepository {
             Query query = new Query(Criteria.where(URL_ID_KEY).is(hash));
             return Optional.ofNullable(urlOperations.findOne(query, UrlEntity.class))
                            .map(UrlEntity::getUrl);
-        });
+        }, IO_FIXED_EXECUTOR);
     }
 
     @lombok.Value

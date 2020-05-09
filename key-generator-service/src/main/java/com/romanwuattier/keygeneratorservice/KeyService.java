@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.RandomStringUtils;
-import javax.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+
+import static com.romanwuattier.keygeneratorservice.ThreadPoolUtility.CPU_FIXED_EXECUTOR;
 
 @Component
 @AllArgsConstructor
@@ -27,7 +29,7 @@ class KeyService {
                 uniqKeys.add(generateRandomB62Key());
             }
             return uniqKeys;
-        }).thenCompose(mongoDbRepository::saveBulk).thenApply(__ -> null);
+        }, CPU_FIXED_EXECUTOR).thenCompose(mongoDbRepository::saveBulk).thenApply(__ -> null);
     }
 
     public CompletableFuture<KeyResponse> get() {

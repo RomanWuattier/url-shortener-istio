@@ -20,6 +20,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static com.romanwuattier.keygeneratorservice.ThreadPoolUtility.IO_FIXED_EXECUTOR;
+
 @AllArgsConstructor
 public class MongoDbRepository {
     private final MongoOperations keyOperations;
@@ -34,9 +36,9 @@ public class MongoDbRepository {
                                                .collect(Collectors.toUnmodifiableList());
 
             return keyOperations.insert(bulkEntities, KeyEntity.class);
-        }).thenApply(keyEntities -> keyEntities.stream()
-                                               .map(KeyEntity::getKey)
-                                               .collect(Collectors.toUnmodifiableList()));
+        }, IO_FIXED_EXECUTOR).thenApply(keyEntities -> keyEntities.stream()
+                                                                  .map(KeyEntity::getKey)
+                                                                  .collect(Collectors.toUnmodifiableList()));
     }
 
     public CompletableFuture<Optional<String>> getAndSetToUsed() {
@@ -45,7 +47,7 @@ public class MongoDbRepository {
             Update updateToUsed = new Update().set("used", true);
             return Optional.ofNullable(keyOperations.findAndModify(unUsed, updateToUsed, KeyEntity.class))
                            .map(KeyEntity::getKey);
-        });
+        }, IO_FIXED_EXECUTOR);
     }
 
     public CompletableFuture<Optional<String>> release(String id) {
@@ -54,7 +56,7 @@ public class MongoDbRepository {
             Update setToUnused = new Update().set("used", false);
             return Optional.ofNullable(keyOperations.findAndModify(findById, setToUnused, KeyEntity.class))
                            .map(KeyEntity::getKey);
-        });
+        }, IO_FIXED_EXECUTOR);
     }
 
     @lombok.Value

@@ -53,6 +53,13 @@ spec:
             - name: mongodb-root-rw-secret
               mountPath: /etc/secret
               readOnly: true
+          resources:
+            limits:
+              cpu: "2"
+              memory: 1Gi
+            requests:
+              cpu: 256m
+              memory: 1Gi
       volumes:
       - name: mongodb-root-rw-secret
         secret:
